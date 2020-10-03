@@ -1,0 +1,3 @@
+# Beershop
+
+Toy API project
