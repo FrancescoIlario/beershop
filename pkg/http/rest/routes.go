@@ -7,6 +7,7 @@ import (
 )
 
 func (s *server) routes() {
+	s.log.Logln("Registering routes")
 	router := mux.NewRouter()
 	{ // Beer
 		router.HandleFunc("/beer", s.handleCreate()).Methods(http.MethodPost)

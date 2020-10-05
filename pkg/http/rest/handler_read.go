@@ -36,7 +36,7 @@ func (s *server) handleRead() http.HandlerFunc {
 		id, err := uuid.Parse(idStr)
 		if err != nil {
 			s.respond(w, r, e{Message: "not valid id"}, http.StatusBadRequest)
-			log.Printf("not valid id: %v", err)
+			s.log.Logf("not valid id: %v", err)
 			return
 		}
 

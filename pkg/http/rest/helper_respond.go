@@ -2,7 +2,6 @@ package rest
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 )
 
@@ -16,6 +15,6 @@ func (s *server) respond(w http.ResponseWriter, r *http.Request, data interface{
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte("error encoding response as JSON"))
-		log.Printf("error encoding response as JSON: %v", err)
+		s.log.Logf("error encoding response as JSON: %v", err)
 	}
 }

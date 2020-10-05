@@ -2,7 +2,6 @@ package rest
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 
 	"github.com/google/uuid"
@@ -19,14 +18,14 @@ func (s *server) handleDelete() http.HandlerFunc {
 		err := json.NewDecoder(r.Body).Decode(&req)
 		if err != nil {
 			s.respond(w, r, e{Message: "error deconding request"}, http.StatusBadRequest)
-			log.Printf("error deconding body: %v", err)
+			s.log.Logf("error deconding body: %v", err)
 			return
 		}
 
 		// persisting request
 		if err := s.db.Delete(req.Id); err != nil {
 			s.respond(w, r, e{Message: "error persisting data into database"}, http.StatusInternalServerError)
-			log.Printf("error persisting data into database: %v", err)
+			s.log.Logf("error persisting data into database: %v", err)
 			return
 		}
 

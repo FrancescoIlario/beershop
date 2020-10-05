@@ -1,7 +1,6 @@
 package rest
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/FrancescoIlario/beershop/pkg/domain"
@@ -34,7 +33,7 @@ func (s *server) handleList() http.HandlerFunc {
 		b, err := s.db.List()
 		if err != nil {
 			s.respond(w, r, e{Message: "error reading data from database"}, http.StatusInternalServerError)
-			log.Printf("error reading data from database: %v", err)
+			s.log.Logf("error reading data from database: %v", err)
 			return
 		}
 
