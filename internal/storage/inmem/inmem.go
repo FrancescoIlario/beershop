@@ -3,24 +3,24 @@ package inmem
 import (
 	"sync"
 
-	"github.com/FrancescoIlario/beershop/internal/domain"
+	"github.com/FrancescoIlario/beershop"
 	"github.com/FrancescoIlario/beershop/internal/storage"
 	"github.com/google/uuid"
 )
 
 type repo struct {
-	store map[uuid.UUID]domain.Beer
+	store map[uuid.UUID]beershop.Beer
 	mutex sync.RWMutex
 }
 
 func New() storage.Repository {
 	return &repo{
-		store: map[uuid.UUID]domain.Beer{},
+		store: map[uuid.UUID]beershop.Beer{},
 		mutex: sync.RWMutex{},
 	}
 }
 
-func (r *repo) Create(b domain.Beer) (uuid.UUID, error) {
+func (r *repo) Create(b beershop.Beer) (uuid.UUID, error) {
 	r.mutex.Lock()
 	defer r.mutex.Unlock()
 
@@ -47,11 +47,11 @@ func (r *repo) Delete(id uuid.UUID) error {
 	return storage.ErrNotFound
 }
 
-func (r *repo) List() ([]domain.Beer, error) {
+func (r *repo) List() ([]beershop.Beer, error) {
 	r.mutex.RLock()
 	defer r.mutex.RUnlock()
 
-	v := make([]domain.Beer, len(r.store))
+	v := make([]beershop.Beer, len(r.store))
 	count := 0
 	for _, b := range r.store {
 		v[count] = b
@@ -60,13 +60,13 @@ func (r *repo) List() ([]domain.Beer, error) {
 	return v, nil
 }
 
-func (r *repo) Read(id uuid.UUID) (domain.Beer, error) {
+func (r *repo) Read(id uuid.UUID) (beershop.Beer, error) {
 	r.mutex.RLock()
 	defer r.mutex.RUnlock()
 
 	b, ok := r.store[id]
 	if !ok {
-		return domain.Beer{}, storage.ErrNotFound
+		return beershop.Beer{}, storage.ErrNotFound
 	}
 	return b, nil
 }

@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/FrancescoIlario/beershop/internal/domain"
+	"github.com/FrancescoIlario/beershop"
 	"github.com/google/uuid"
 )
 
@@ -28,7 +28,7 @@ func (s *server) handleCreate() http.HandlerFunc {
 		}
 
 		// persisting request
-		id, err := s.db.Create(domain.Beer{Name: req.Name, Abv: req.Abv})
+		id, err := s.db.Create(beershop.Beer{Name: req.Name, Abv: req.Abv})
 		if err != nil {
 			s.respond(w, r, e{Message: "error persisting data into database"}, http.StatusInternalServerError)
 			s.log.Logf("error persisting data into database: %v", err)

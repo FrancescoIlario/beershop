@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/FrancescoIlario/beershop/internal/domain"
+	"github.com/FrancescoIlario/beershop"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 )
@@ -18,7 +18,7 @@ func (s *server) handleRead() http.HandlerFunc {
 	type response struct {
 		Beer beer `json:"beer"`
 	}
-	convert := func(b domain.Beer) beer {
+	convert := func(b beershop.Beer) beer {
 		return beer{
 			Id:   b.Id,
 			Name: b.Name,

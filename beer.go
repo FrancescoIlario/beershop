@@ -1,8 +1,8 @@
-package domain
+package beershop
 
 import "github.com/google/uuid"
 
-// Beer ...
+// Beer A Beer is a beer in the shop
 type Beer struct {
 	Id   uuid.UUID
 	Name string

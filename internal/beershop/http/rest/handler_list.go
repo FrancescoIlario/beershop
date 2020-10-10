@@ -3,7 +3,7 @@ package rest
 import (
 	"net/http"
 
-	"github.com/FrancescoIlario/beershop/internal/domain"
+	"github.com/FrancescoIlario/beershop"
 	"github.com/google/uuid"
 )
 
@@ -16,7 +16,7 @@ func (s *server) handleList() http.HandlerFunc {
 	type response struct {
 		Beers []beer `json:"beers"`
 	}
-	convert := func(b []domain.Beer) []beer {
+	convert := func(b []beershop.Beer) []beer {
 		lb := make([]beer, len(b))
 		for i, be := range b {
 			lb[i] = beer{

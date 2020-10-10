@@ -3,7 +3,7 @@ package inmem_test
 import (
 	"testing"
 
-	"github.com/FrancescoIlario/beershop/internal/domain"
+	"github.com/FrancescoIlario/beershop"
 	"github.com/FrancescoIlario/beershop/internal/storage"
 	"github.com/FrancescoIlario/beershop/internal/storage/inmem"
 	"github.com/google/uuid"
@@ -14,7 +14,7 @@ func Test_create(t *testing.T) {
 	// Arrange
 	is := is.New(t)
 	repo := inmem.New()
-	b := domain.Beer{
+	b := beershop.Beer{
 		Name: "beer",
 		Abv:  4.5,
 	}
@@ -43,7 +43,7 @@ func Test_read_existing_beer(t *testing.T) {
 	// Arrange
 	is := is.New(t)
 	repo := inmem.New()
-	b := domain.Beer{
+	b := beershop.Beer{
 		Name: "beer",
 		Abv:  4.5,
 	}
@@ -75,7 +75,7 @@ func Test_delete_existing_beer(t *testing.T) {
 	// Arrange
 	is := is.New(t)
 	repo := inmem.New()
-	b := domain.Beer{
+	b := beershop.Beer{
 		Name: "beer",
 		Abv:  4.5,
 	}
@@ -109,7 +109,7 @@ func Test_list_beershop(t *testing.T) {
 	// Arrange
 	is := is.New(t)
 	repo := inmem.New()
-	bs := []domain.Beer{
+	bs := []beershop.Beer{
 		{
 			Name: "beer 1",
 			Abv:  4.5,
@@ -119,7 +119,7 @@ func Test_list_beershop(t *testing.T) {
 			Abv:  5.0,
 		},
 	}
-	bsm := make(map[uuid.UUID]domain.Beer, len(bs))
+	bsm := make(map[uuid.UUID]beershop.Beer, len(bs))
 
 	for _, b := range bs {
 		id, err := repo.Create(b)
