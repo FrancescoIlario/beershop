@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/FrancescoIlario/beershop/internal/beershop/http/rest"
+	"github.com/FrancescoIlario/beershop/internal/http/rest"
 	"github.com/FrancescoIlario/beershop/internal/storage/inmem"
 )
 
