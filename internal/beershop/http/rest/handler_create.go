@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/FrancescoIlario/beershop/pkg/domain"
+	"github.com/FrancescoIlario/beershop/internal/domain"
 	"github.com/google/uuid"
 )
 

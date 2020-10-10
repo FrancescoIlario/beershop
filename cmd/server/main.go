@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/FrancescoIlario/beershop/pkg/http/rest"
-	"github.com/FrancescoIlario/beershop/pkg/storage/inmem"
+	"github.com/FrancescoIlario/beershop/internal/beershop/http/rest"
+	"github.com/FrancescoIlario/beershop/internal/storage/inmem"
 )
 
 const addr = ":8080"

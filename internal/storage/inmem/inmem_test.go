@@ -3,9 +3,9 @@ package inmem_test
 import (
 	"testing"
 
-	"github.com/FrancescoIlario/beershop/pkg/domain"
-	"github.com/FrancescoIlario/beershop/pkg/storage"
-	"github.com/FrancescoIlario/beershop/pkg/storage/inmem"
+	"github.com/FrancescoIlario/beershop/internal/domain"
+	"github.com/FrancescoIlario/beershop/internal/storage"
+	"github.com/FrancescoIlario/beershop/internal/storage/inmem"
 	"github.com/google/uuid"
 	"github.com/matryer/is"
 )

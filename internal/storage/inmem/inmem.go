@@ -3,8 +3,8 @@ package inmem
 import (
 	"sync"
 
-	"github.com/FrancescoIlario/beershop/pkg/domain"
-	"github.com/FrancescoIlario/beershop/pkg/storage"
+	"github.com/FrancescoIlario/beershop/internal/domain"
+	"github.com/FrancescoIlario/beershop/internal/storage"
 	"github.com/google/uuid"
 )
 

@@ -3,8 +3,8 @@ package rest
 import (
 	"net/http"
 
+	"github.com/FrancescoIlario/beershop/internal/storage"
 	"github.com/FrancescoIlario/beershop/pkg/log"
-	"github.com/FrancescoIlario/beershop/pkg/storage"
 )
 
 type server struct {

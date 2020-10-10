@@ -3,7 +3,7 @@ package storage
 import (
 	"fmt"
 
-	"github.com/FrancescoIlario/beershop/pkg/domain"
+	"github.com/FrancescoIlario/beershop/internal/domain"
 	"github.com/google/uuid"
 )
 
