@@ -1,0 +1,62 @@
+syntax = "proto3";
+package grpc;
+
+option optimize_for = LITE_RUNTIME;
+option go_package = "github.com/FrancescoIlario/Beer/internal/grpc";
+
+// The Beer service definition.
+service Beershop {
+    // Creates a new Beer
+    rpc Create (CreateBeerRequest) returns (CreateBeerReply) {}
+    // Reads an Beer
+    rpc Read (ReadBeerRequest) returns (ReadBeerReply) {}
+    // Delete an Beer
+    rpc Delete (DeleteBeerRequest) returns (DeleteBeerReply) {}
+    // List an Beer
+    rpc List (ListActivitiesRequest) returns (ListActivitiesReply) {}
+}
+
+// The request message containing the Beer details
+message CreateBeerRequest {
+    string Name = 1;
+    float Abv = 2;
+}
+
+// The response message containing the id of the Beer
+message CreateBeerReply {
+    string Id = 1;
+}
+
+// The request message for the read request
+message ReadBeerRequest {
+    string Id = 1;
+}
+
+// The response message to the read request
+message ReadBeerReply {
+    Beer Beer = 1;
+}
+
+// The request message for the delete request
+message DeleteBeerRequest {
+    string Id = 1;
+}
+
+// The response message to the delete request
+message DeleteBeerReply { }
+
+// The request message for the list activities request
+message ListActivitiesRequest { 
+    repeated string FilterIds = 1;
+}
+
+// The response message to the list activities request.
+message ListActivitiesReply {
+    repeated Beer Beers = 1;
+}
+
+message Beer {
+    string Id = 1;
+    string Name = 2;
+    float Abv = 3;
+}
