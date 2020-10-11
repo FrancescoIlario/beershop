@@ -1,0 +1,1 @@
+CREATE TABLE beers(id uuid PRIMARY KEY, name varchar(100), abv FLOAT)
