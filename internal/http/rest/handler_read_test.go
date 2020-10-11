@@ -8,7 +8,8 @@ import (
 
 	"github.com/FrancescoIlario/beershop"
 	"github.com/FrancescoIlario/beershop/internal/http/rest"
-	"github.com/FrancescoIlario/beershop/internal/storage/inmem"
+	"github.com/FrancescoIlario/beershop/internal/mocks"
+	"github.com/golang/mock/gomock"
 	"github.com/google/uuid"
 	"github.com/matryer/is"
 )
@@ -16,19 +17,19 @@ import (
 func Test_Read(t *testing.T) {
 	// arrange
 	is := is.New(t)
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
 
-	st := inmem.New()
+	st := mocks.NewMockRepository(mockCtrl)
 	b := beershop.Beer{
+		ID:   uuid.New(),
 		Name: "Beer 1",
 		Abv:  1.0,
 	}
-	id, err := st.Create(b)
-	if err != nil {
-		t.Fatalf("error arranging inmem db: %v", err)
-	}
+	st.EXPECT().Read(b.ID).Return(b, nil).Times(1)
 
 	sv := rest.NewServer(st)
-	req := httptest.NewRequest(http.MethodGet, "/beer/"+id.String(), nil)
+	req := httptest.NewRequest(http.MethodGet, "/beer/"+b.ID.String(), nil)
 	w := httptest.NewRecorder()
 
 	// act
@@ -46,7 +47,7 @@ func Test_Read(t *testing.T) {
 		t.Fatalf("error reading JSON response: %v", err)
 	}
 
-	is.Equal(resp.Beer.ID, id)
+	is.Equal(resp.Beer.ID, b.ID)
 	is.Equal(resp.Beer.Name, b.Name)
 	is.Equal(resp.Beer.Abv, b.Abv)
 }

@@ -8,7 +8,8 @@ import (
 
 	"github.com/FrancescoIlario/beershop"
 	"github.com/FrancescoIlario/beershop/internal/http/rest"
-	"github.com/FrancescoIlario/beershop/internal/storage/inmem"
+	"github.com/FrancescoIlario/beershop/internal/mocks"
+	"github.com/golang/mock/gomock"
 	"github.com/google/uuid"
 	"github.com/matryer/is"
 )
@@ -17,21 +18,19 @@ func Test_List(t *testing.T) {
 	// arrange
 	is := is.New(t)
 
-	st := inmem.New()
-
 	bb := []beershop.Beer{
-		{Name: "Beer 1", Abv: 1.0},
-		{Name: "Beer 2", Abv: 2.0},
+		{ID: uuid.New(), Name: "Beer 1", Abv: 1.0},
+		{ID: uuid.New(), Name: "Beer 2", Abv: 2.0},
 	}
 	mbb := make(map[uuid.UUID]beershop.Beer)
 	for _, b := range bb {
-		id, err := st.Create(b)
-		if err != nil {
-			t.Fatalf("error arranging inmem db: %v", err)
-		}
-		b.ID = id
-		mbb[id] = b
+		mbb[b.ID] = b
 	}
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+
+	st := mocks.NewMockRepository(mockCtrl)
+	st.EXPECT().List().Return(bb, nil).Times(1)
 
 	sv := rest.NewServer(st)
 	req := httptest.NewRequest(http.MethodGet, "/beer", nil)

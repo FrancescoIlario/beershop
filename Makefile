@@ -7,3 +7,11 @@ build:
 .PHONY: clean
 clean:
 	rm -rf bin/
+
+.PHONY: test
+test: gen
+	$(GO) test ./...
+
+.PHONY: gen
+gen:
+	$(GO) generate ./...

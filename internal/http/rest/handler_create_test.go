@@ -8,20 +8,28 @@ import (
 	"testing"
 
 	"github.com/FrancescoIlario/beershop/internal/http/rest"
-	"github.com/FrancescoIlario/beershop/internal/storage/inmem"
+	"github.com/FrancescoIlario/beershop/internal/mocks"
+	"github.com/golang/mock/gomock"
 	"github.com/google/uuid"
+	"github.com/matryer/is"
 )
 
 func Test_Create(t *testing.T) {
 	// arrange
-	st := inmem.New()
+	is := is.New(t)
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+
+	id := uuid.New()
+	st := mocks.NewMockRepository(mockCtrl)
+	st.EXPECT().Create(gomock.Any()).Return(id, nil).Times(1)
+
 	sv := rest.NewServer(st)
 
 	r := struct {
 		Name string  `json:"name"`
 		Abv  float32 `json:"abv"`
 	}{"name", 1.0}
-
 	b, err := json.Marshal(&r)
 	if err != nil {
 		t.Fatalf("error generating JSON from request: %v", err)
@@ -42,7 +50,6 @@ func Test_Create(t *testing.T) {
 		t.Fatalf("error reading JSON response: %v", err)
 	}
 
-	if resp.ID.Variant() == uuid.Invalid {
-		t.Errorf("Invalid UUID returned: %s", resp.ID)
-	}
+	is.True(resp.ID.Variant() != uuid.Invalid)
+	is.Equal(id, resp.ID)
 }
