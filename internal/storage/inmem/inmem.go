@@ -29,7 +29,7 @@ func (r *repo) Create(b beershop.Beer) (uuid.UUID, error) {
 		return uuid.UUID{}, err
 	}
 
-	b.Id = id
+	b.ID = id
 	r.store[id] = b
 	return id, nil
 }
@@ -39,7 +39,7 @@ func (r *repo) Delete(id uuid.UUID) error {
 	defer r.mutex.Unlock()
 
 	for _, b := range r.store {
-		if b.Id == id {
+		if b.ID == id {
 			delete(r.store, id)
 			return nil
 		}

@@ -14,7 +14,7 @@ func (s *server) handleCreate() http.HandlerFunc {
 		Abv  float32 `json:"abv"`
 	}
 	type response struct {
-		Id uuid.UUID `json:"id"`
+		ID uuid.UUID `json:"id"`
 	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -36,6 +36,6 @@ func (s *server) handleCreate() http.HandlerFunc {
 		}
 
 		// responding
-		s.respond(w, r, response{Id: id}, http.StatusCreated)
+		s.respond(w, r, response{ID: id}, http.StatusCreated)
 	}
 }

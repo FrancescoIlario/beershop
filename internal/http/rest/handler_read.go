@@ -11,7 +11,7 @@ import (
 
 func (s *server) handleRead() http.HandlerFunc {
 	type beer struct {
-		Id   uuid.UUID `json:"id"`
+		ID   uuid.UUID `json:"id"`
 		Name string    `json:"name"`
 		Abv  float32   `json:"abv"`
 	}
@@ -20,7 +20,7 @@ func (s *server) handleRead() http.HandlerFunc {
 	}
 	convert := func(b beershop.Beer) beer {
 		return beer{
-			Id:   b.Id,
+			ID:   b.ID,
 			Name: b.Name,
 			Abv:  b.Abv,
 		}

@@ -9,7 +9,7 @@ import (
 
 func (s *server) handleList() http.HandlerFunc {
 	type beer struct {
-		Id   uuid.UUID `json:"id"`
+		ID   uuid.UUID `json:"id"`
 		Name string    `json:"name"`
 		Abv  float32   `json:"abv"`
 	}
@@ -20,7 +20,7 @@ func (s *server) handleList() http.HandlerFunc {
 		lb := make([]beer, len(b))
 		for i, be := range b {
 			lb[i] = beer{
-				Id:   be.Id,
+				ID:   be.ID,
 				Name: be.Name,
 				Abv:  be.Abv,
 			}

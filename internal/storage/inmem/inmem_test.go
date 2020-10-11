@@ -50,7 +50,7 @@ func Test_read_existing_beer(t *testing.T) {
 
 	id, err := repo.Create(b)
 	is.NoErr(err)
-	b.Id = id
+	b.ID = id
 
 	// Act
 	br, err := repo.Read(id)
@@ -124,7 +124,7 @@ func Test_list_beershop(t *testing.T) {
 	for _, b := range bs {
 		id, err := repo.Create(b)
 		is.NoErr(err)
-		b.Id = id
+		b.ID = id
 		bsm[id] = b
 	}
 
@@ -135,7 +135,7 @@ func Test_list_beershop(t *testing.T) {
 	is.NoErr(err)
 	is.True(len(l) == len(bs))
 	for _, bl := range l {
-		bm, ok := bsm[bl.Id]
+		bm, ok := bsm[bl.ID]
 		is.True(ok)
 		is.Equal(bm, bl)
 	}

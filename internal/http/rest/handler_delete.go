@@ -1,29 +1,28 @@
 package rest
 
 import (
-	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/google/uuid"
+	"github.com/gorilla/mux"
 )
 
 func (s *server) handleDelete() http.HandlerFunc {
-	type request struct {
-		Id uuid.UUID `json:"id"`
-	}
-
 	return func(w http.ResponseWriter, r *http.Request) {
 		// decode request
-		var req request
-		err := json.NewDecoder(r.Body).Decode(&req)
+		v := mux.Vars(r)
+		idStr := v["id"]
+		id, err := uuid.Parse(idStr)
 		if err != nil {
-			s.respond(w, r, e{Message: "error deconding request"}, http.StatusBadRequest)
-			s.log.Logf("error deconding body: %v", err)
+			m := fmt.Sprintf("provided id is not a valid guid: %v", idStr)
+			s.respond(w, r, e{Message: m}, http.StatusBadRequest)
+			s.log.Logf("provided id (%v) is not a valid guid: %v", idStr, err)
 			return
 		}
 
 		// persisting request
-		if err := s.db.Delete(req.Id); err != nil {
+		if err := s.db.Delete(id); err != nil {
 			s.respond(w, r, e{Message: "error persisting data into database"}, http.StatusInternalServerError)
 			s.log.Logf("error persisting data into database: %v", err)
 			return
