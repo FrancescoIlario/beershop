@@ -3,17 +3,17 @@ package rest
 import (
 	"net/http"
 
-	"github.com/FrancescoIlario/beershop/internal/storage"
+	"github.com/FrancescoIlario/beershop"
 	"github.com/FrancescoIlario/beershop/pkg/log"
 )
 
 type server struct {
-	db  storage.Repository
+	db  beershop.Repository
 	mux http.Handler
 	log log.Logger
 }
 
-func NewServer(db storage.Repository) http.Handler {
+func NewServer(db beershop.Repository) http.Handler {
 	s := &server{
 		db:  db,
 		log: &log.L{},

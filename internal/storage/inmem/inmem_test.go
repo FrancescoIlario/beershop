@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/FrancescoIlario/beershop"
-	"github.com/FrancescoIlario/beershop/internal/storage"
 	"github.com/FrancescoIlario/beershop/internal/storage/inmem"
 	"github.com/google/uuid"
 	"github.com/matryer/is"
@@ -36,7 +35,7 @@ func Test_read_not_existing_beer(t *testing.T) {
 	_, err := repo.Read(uuid.New())
 
 	// Assert
-	is.Equal(err, storage.ErrNotFound)
+	is.Equal(err, beershop.ErrNotFound)
 }
 
 func Test_read_existing_beer(t *testing.T) {
@@ -68,7 +67,7 @@ func Test_delete_not_existing_beer(t *testing.T) {
 	err := repo.Delete(uuid.New())
 
 	// Assert
-	is.Equal(err, storage.ErrNotFound)
+	is.Equal(err, beershop.ErrNotFound)
 }
 
 func Test_delete_existing_beer(t *testing.T) {
@@ -89,7 +88,7 @@ func Test_delete_existing_beer(t *testing.T) {
 	// Assert
 	is.NoErr(err)
 	_, err = repo.Read(id)
-	is.Equal(err, storage.ErrNotFound)
+	is.Equal(err, beershop.ErrNotFound)
 }
 
 func Test_list_empty_beershop(t *testing.T) {

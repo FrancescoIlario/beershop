@@ -4,7 +4,6 @@ import (
 	"sync"
 
 	"github.com/FrancescoIlario/beershop"
-	"github.com/FrancescoIlario/beershop/internal/storage"
 	"github.com/google/uuid"
 )
 
@@ -13,7 +12,7 @@ type repo struct {
 	mutex sync.RWMutex
 }
 
-func New() storage.Repository {
+func New() beershop.Repository {
 	return &repo{
 		store: map[uuid.UUID]beershop.Beer{},
 		mutex: sync.RWMutex{},
@@ -44,7 +43,7 @@ func (r *repo) Delete(id uuid.UUID) error {
 			return nil
 		}
 	}
-	return storage.ErrNotFound
+	return beershop.ErrNotFound
 }
 
 func (r *repo) List() ([]beershop.Beer, error) {
@@ -66,7 +65,7 @@ func (r *repo) Read(id uuid.UUID) (beershop.Beer, error) {
 
 	b, ok := r.store[id]
 	if !ok {
-		return beershop.Beer{}, storage.ErrNotFound
+		return beershop.Beer{}, beershop.ErrNotFound
 	}
 	return b, nil
 }
