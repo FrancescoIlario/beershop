@@ -30,7 +30,7 @@ func Test_List(t *testing.T) {
 	defer mockCtrl.Finish()
 
 	st := mocks.NewMockRepository(mockCtrl)
-	st.EXPECT().List().Return(bb, nil).Times(1)
+	st.EXPECT().List(gomock.Any()).Return(bb, nil).Times(1)
 
 	sv := rest.NewServer(st)
 	req := httptest.NewRequest(http.MethodGet, "/beer", nil)

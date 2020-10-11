@@ -30,7 +30,7 @@ func (s *server) handleList() http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		// reading from database
-		b, err := s.db.List()
+		b, err := s.db.List(r.Context())
 		if err != nil {
 			s.respond(w, r, e{Message: "error reading data from database"}, http.StatusInternalServerError)
 			s.log.Logf("error reading data from database: %v", err)

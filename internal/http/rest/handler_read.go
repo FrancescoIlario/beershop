@@ -41,7 +41,7 @@ func (s *server) handleRead() http.HandlerFunc {
 		}
 
 		// reading from database
-		b, err := s.db.Read(id)
+		b, err := s.db.Read(r.Context(), id)
 		if err != nil {
 			s.respond(w, r, e{Message: err.Error()}, http.StatusInternalServerError)
 			log.Printf("error reading data from database: %v", err)

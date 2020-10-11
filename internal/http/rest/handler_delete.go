@@ -22,7 +22,7 @@ func (s *server) handleDelete() http.HandlerFunc {
 		}
 
 		// persisting request
-		if err := s.db.Delete(id); err != nil {
+		if err := s.db.Delete(r.Context(), id); err != nil {
 			s.respond(w, r, e{Message: "error persisting data into database"}, http.StatusInternalServerError)
 			s.log.Logf("error persisting data into database: %v", err)
 			return

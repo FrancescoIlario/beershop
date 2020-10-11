@@ -1,6 +1,7 @@
 package beershop
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/google/uuid"
@@ -8,10 +9,10 @@ import (
 
 // Repository ...
 type Repository interface {
-	Create(Beer) (uuid.UUID, error)
-	Delete(uuid.UUID) error
-	List() ([]Beer, error)
-	Read(uuid.UUID) (Beer, error)
+	Create(context.Context, Beer) (uuid.UUID, error)
+	Delete(context.Context, uuid.UUID) error
+	List(context.Context) ([]Beer, error)
+	Read(context.Context, uuid.UUID) (Beer, error)
 }
 
 var ErrNotFound = fmt.Errorf("beer not found")

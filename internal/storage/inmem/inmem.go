@@ -1,6 +1,7 @@
 package inmem
 
 import (
+	"context"
 	"sync"
 
 	"github.com/FrancescoIlario/beershop"
@@ -19,7 +20,7 @@ func New() beershop.Repository {
 	}
 }
 
-func (r *repo) Create(b beershop.Beer) (uuid.UUID, error) {
+func (r *repo) Create(c context.Context, b beershop.Beer) (uuid.UUID, error) {
 	r.mutex.Lock()
 	defer r.mutex.Unlock()
 
@@ -33,7 +34,7 @@ func (r *repo) Create(b beershop.Beer) (uuid.UUID, error) {
 	return id, nil
 }
 
-func (r *repo) Delete(id uuid.UUID) error {
+func (r *repo) Delete(c context.Context, id uuid.UUID) error {
 	r.mutex.Lock()
 	defer r.mutex.Unlock()
 
@@ -46,7 +47,7 @@ func (r *repo) Delete(id uuid.UUID) error {
 	return beershop.ErrNotFound
 }
 
-func (r *repo) List() ([]beershop.Beer, error) {
+func (r *repo) List(c context.Context) ([]beershop.Beer, error) {
 	r.mutex.RLock()
 	defer r.mutex.RUnlock()
 
@@ -59,7 +60,7 @@ func (r *repo) List() ([]beershop.Beer, error) {
 	return v, nil
 }
 
-func (r *repo) Read(id uuid.UUID) (beershop.Beer, error) {
+func (r *repo) Read(c context.Context, id uuid.UUID) (beershop.Beer, error) {
 	r.mutex.RLock()
 	defer r.mutex.RUnlock()
 

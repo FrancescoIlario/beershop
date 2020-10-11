@@ -22,7 +22,7 @@ func Test_Create(t *testing.T) {
 
 	id := uuid.New()
 	st := mocks.NewMockRepository(mockCtrl)
-	st.EXPECT().Create(gomock.Any()).Return(id, nil).Times(1)
+	st.EXPECT().Create(gomock.Any(), gomock.Any()).Return(id, nil).Times(1)
 
 	sv := rest.NewServer(st)
 

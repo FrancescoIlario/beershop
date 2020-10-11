@@ -1,6 +1,7 @@
 package inmem_test
 
 import (
+	"context"
 	"testing"
 
 	"github.com/FrancescoIlario/beershop"
@@ -19,7 +20,7 @@ func Test_create(t *testing.T) {
 	}
 
 	// Act
-	id, err := repo.Create(b)
+	id, err := repo.Create(context.TODO(), b)
 
 	// Assert
 	is.NoErr(err)
@@ -32,7 +33,7 @@ func Test_read_not_existing_beer(t *testing.T) {
 	repo := inmem.New()
 
 	// Act
-	_, err := repo.Read(uuid.New())
+	_, err := repo.Read(context.TODO(), uuid.New())
 
 	// Assert
 	is.Equal(err, beershop.ErrNotFound)
@@ -47,12 +48,12 @@ func Test_read_existing_beer(t *testing.T) {
 		Abv:  4.5,
 	}
 
-	id, err := repo.Create(b)
+	id, err := repo.Create(context.TODO(), b)
 	is.NoErr(err)
 	b.ID = id
 
 	// Act
-	br, err := repo.Read(id)
+	br, err := repo.Read(context.TODO(), id)
 
 	// Assert
 	is.Equal(b, br)
@@ -64,7 +65,7 @@ func Test_delete_not_existing_beer(t *testing.T) {
 	repo := inmem.New()
 
 	// Act
-	err := repo.Delete(uuid.New())
+	err := repo.Delete(context.TODO(), uuid.New())
 
 	// Assert
 	is.Equal(err, beershop.ErrNotFound)
@@ -79,15 +80,16 @@ func Test_delete_existing_beer(t *testing.T) {
 		Abv:  4.5,
 	}
 
-	id, err := repo.Create(b)
+	ctx := context.TODO()
+	id, err := repo.Create(ctx, b)
 	is.NoErr(err)
 
 	// Act
-	err = repo.Delete(id)
+	err = repo.Delete(ctx, id)
 
 	// Assert
 	is.NoErr(err)
-	_, err = repo.Read(id)
+	_, err = repo.Read(ctx, id)
 	is.Equal(err, beershop.ErrNotFound)
 }
 
@@ -97,7 +99,7 @@ func Test_list_empty_beershop(t *testing.T) {
 	repo := inmem.New()
 
 	// Act
-	l, err := repo.List()
+	l, err := repo.List(context.TODO())
 
 	// Assert
 	is.NoErr(err)
@@ -119,16 +121,17 @@ func Test_list_beershop(t *testing.T) {
 		},
 	}
 	bsm := make(map[uuid.UUID]beershop.Beer, len(bs))
+	ctx := context.TODO()
 
 	for _, b := range bs {
-		id, err := repo.Create(b)
+		id, err := repo.Create(ctx, b)
 		is.NoErr(err)
 		b.ID = id
 		bsm[id] = b
 	}
 
 	// Act
-	l, err := repo.List()
+	l, err := repo.List(ctx)
 
 	// Assert
 	is.NoErr(err)

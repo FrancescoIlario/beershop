@@ -20,7 +20,7 @@ func Test_Delete(t *testing.T) {
 
 	id := uuid.New()
 	st := mocks.NewMockRepository(mockCtrl)
-	st.EXPECT().Delete(id).Return(nil).Times(1)
+	st.EXPECT().Delete(gomock.Any(), id).Return(nil).Times(1)
 
 	sv := rest.NewServer(st)
 

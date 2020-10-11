@@ -26,7 +26,7 @@ func Test_Read(t *testing.T) {
 		Name: "Beer 1",
 		Abv:  1.0,
 	}
-	st.EXPECT().Read(b.ID).Return(b, nil).Times(1)
+	st.EXPECT().Read(gomock.Any(), b.ID).Return(b, nil).Times(1)
 
 	sv := rest.NewServer(st)
 	req := httptest.NewRequest(http.MethodGet, "/beer/"+b.ID.String(), nil)
