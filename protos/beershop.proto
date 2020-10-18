@@ -13,7 +13,7 @@ service Beershop {
     // Delete an Beer
     rpc Delete (DeleteBeerRequest) returns (DeleteBeerReply) {}
     // List an Beer
-    rpc List (ListActivitiesRequest) returns (ListActivitiesReply) {}
+    rpc List (ListBeersRequest) returns (ListBeersReply) {}
 }
 
 // The request message containing the Beer details
@@ -43,15 +43,17 @@ message DeleteBeerRequest {
 }
 
 // The response message to the delete request
-message DeleteBeerReply { }
+message DeleteBeerReply { 
+    string Id = 1;
+}
 
-// The request message for the list activities request
-message ListActivitiesRequest { 
+// The request message for the list beers request
+message ListBeersRequest { 
     repeated string FilterIds = 1;
 }
 
-// The response message to the list activities request.
-message ListActivitiesReply {
+// The response message to the list beers request.
+message ListBeersReply {
     repeated Beer Beers = 1;
 }
 
@@ -59,4 +61,14 @@ message Beer {
     string Id = 1;
     string Name = 2;
     float Abv = 3;
+}
+
+message ValidationError {
+    string error_message = 1;
+    repeated ValidationEntry errors = 2;
+}
+
+message ValidationEntry {
+    string key = 1;
+    string value = 2;
 }
