@@ -15,4 +15,8 @@ type Repository interface {
 	Read(context.Context, uuid.UUID) (Beer, error)
 }
 
+// ErrNotFound the requested beer can not be found on database
 var ErrNotFound = fmt.Errorf("beer not found")
+
+// ErrConflict represents a conflict with an existing beer
+var ErrConflict = fmt.Errorf("beer is present")
