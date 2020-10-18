@@ -2,6 +2,8 @@ package rest_test
 
 import (
 	"encoding/json"
+	"fmt"
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -15,52 +17,89 @@ import (
 )
 
 func Test_List(t *testing.T) {
+	buildRequest := func(t *testing.T) *http.Request {
+		return httptest.NewRequest(http.MethodGet, "/beer", nil)
+	}
+
+	cc := []struct {
+		name       string
+		statusCode int
+		errCode    rest.ErrorCode
+		err        error
+		res        *beershop.ListBeerQryResult
+	}{
+		{
+			name:       "valid",
+			statusCode: http.StatusOK,
+			err:        nil,
+			res: &beershop.ListBeerQryResult{
+				Result: &struct {
+					Beers []beershop.ListBeerQryBeerViewModel
+				}{
+					Beers: []beershop.ListBeerQryBeerViewModel{
+						{
+							ID:   uuid.New(),
+							Name: "first",
+							Abv:  1.0,
+						},
+						{
+							ID:   uuid.New(),
+							Name: "second",
+							Abv:  2.0,
+						},
+					},
+				},
+			},
+		},
+		{
+			name:       "internal error",
+			statusCode: http.StatusInternalServerError,
+			errCode:    rest.ErrCodeInternal,
+			err:        fmt.Errorf("internal error"),
+			res:        nil,
+		},
+	}
+
 	// arrange
 	is := is.New(t)
 
-	bb := []beershop.Beer{
-		{ID: uuid.New(), Name: "Beer 1", Abv: 1.0},
-		{ID: uuid.New(), Name: "Beer 2", Abv: 2.0},
+	for _, c := range cc {
+		t.Run(c.name, func(t *testing.T) {
+			// arrange
+			ctrl := gomock.NewController(t)
+			defer ctrl.Finish()
+			be := mocks.NewMockBackend(ctrl)
+
+			sv, td := NewTestServer(t, be)
+			defer td()
+
+			req := buildRequest(t)
+			w := httptest.NewRecorder()
+
+			be.
+				EXPECT().
+				List(gomock.Any(), gomock.Any()).
+				Return(c.res, c.err).
+				Times(1)
+
+			// act
+			sv.ServeHTTP(w, req)
+
+			// assert
+			is.Equal(w.Result().StatusCode, c.statusCode)
+			if w.Result().StatusCode >= 400 {
+				b, err := ioutil.ReadAll(w.Result().Body)
+				if err != nil {
+					t.Fatal("error reading response body")
+				}
+
+				var e rest.E
+				if err := json.Unmarshal(b, &e); err != nil {
+					t.Fatal("error unmarshaling response body")
+				}
+
+				is.Equal(e.Code, c.errCode)
+			}
+		})
 	}
-	mbb := make(map[uuid.UUID]beershop.Beer)
-	for _, b := range bb {
-		mbb[b.ID] = b
-	}
-	mockCtrl := gomock.NewController(t)
-	defer mockCtrl.Finish()
-
-	st := mocks.NewMockRepository(mockCtrl)
-	st.EXPECT().List(gomock.Any()).Return(bb, nil).Times(1)
-
-	sv := rest.NewServer(st)
-	req := httptest.NewRequest(http.MethodGet, "/beer", nil)
-	w := httptest.NewRecorder()
-
-	// act
-	sv.ServeHTTP(w, req)
-
-	// assert
-	resp := struct {
-		Beers []struct {
-			ID   uuid.UUID `json:"id"`
-			Name string    `json:"name"`
-			Abv  float32   `json:"abv"`
-		} `json:"beers"`
-	}{}
-	if err := json.Unmarshal(w.Body.Bytes(), &resp); err != nil {
-		t.Fatalf("error reading JSON response: %v", err)
-	}
-
-	for _, b := range resp.Beers {
-		mb, ok := mbb[b.ID]
-		if !ok {
-			t.Errorf("not expected beer id: %v", b.ID)
-			continue
-		}
-
-		is.Equal(b.ID, mb.ID)
-		is.Equal(b.Name, mb.Name)
-		is.Equal(b.Abv, mb.Abv)
-	}
-	is.True(len(resp.Beers) == len(bb))
 }

@@ -9,7 +9,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func (s *server) handleRead() http.HandlerFunc {
+func (s *Server) handleRead() http.HandlerFunc {
 	type beer struct {
 		ID   uuid.UUID `json:"id"`
 		Name string    `json:"name"`
@@ -18,11 +18,14 @@ func (s *server) handleRead() http.HandlerFunc {
 	type response struct {
 		Beer beer `json:"beer"`
 	}
-	convert := func(b beershop.Beer) beer {
-		return beer{
-			ID:   b.ID,
-			Name: b.Name,
-			Abv:  b.Abv,
+	handleErr := func(w http.ResponseWriter, r *http.Request, err error, cr *beershop.ReadBeerQryResult) {
+		switch err {
+		case beershop.ErrNotFound:
+			s.respond(w, r, err.Error(), http.StatusNotFound)
+		case beershop.ErrValidationFailed:
+			s.invalid(w, r, cr.Validation.Errors())
+		default:
+			s.error(w, r, http.StatusInternalServerError, ErrCodeInternal, "Error handling request")
 		}
 	}
 
@@ -35,20 +38,21 @@ func (s *server) handleRead() http.HandlerFunc {
 		}
 		id, err := uuid.Parse(idStr)
 		if err != nil {
-			s.respond(w, r, e{Message: "not valid id"}, http.StatusBadRequest)
-			s.log.Logf("not valid id: %v", err)
+			s.respond(w, r, E{Message: "not valid id"}, http.StatusBadRequest)
+			s.L.Logf("not valid id: %v", err)
 			return
 		}
 
 		// reading from database
-		b, err := s.db.Read(r.Context(), id)
+		qry := beershop.ReadBeerQry{ID: id}
+		res, err := s.Be.Read(r.Context(), qry)
 		if err != nil {
-			s.respond(w, r, e{Message: err.Error()}, http.StatusInternalServerError)
-			log.Printf("error reading data from database: %v", err)
+			handleErr(w, r, err, res)
+			log.Printf("error reading data: %v", err)
 			return
 		}
 
 		// responding
-		s.respond(w, r, response{Beer: convert(b)}, http.StatusOK)
+		s.respond(w, r, res, http.StatusOK)
 	}
 }

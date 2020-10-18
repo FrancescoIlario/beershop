@@ -7,21 +7,24 @@ import (
 	"github.com/FrancescoIlario/beershop/pkg/log"
 )
 
-type server struct {
-	db  beershop.Repository
+//Server the beershop rest server
+type Server struct {
 	mux http.Handler
-	log log.Logger
+
+	L  log.Logger
+	Be beershop.Backend
 }
 
-func NewServer(db beershop.Repository) http.Handler {
-	s := &server{
-		db:  db,
-		log: &log.L{},
+// NewServer the beershp rest server constructor
+func NewServer(db beershop.Repository) *Server {
+	s := &Server{
+		L:  &log.L{},
+		Be: beershop.NewBackend(db),
 	}
-	s.routes()
+	s.RegisterRoutes()
 	return s
 }
 
-func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	s.mux.ServeHTTP(w, r)
 }

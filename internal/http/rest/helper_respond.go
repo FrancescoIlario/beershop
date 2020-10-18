@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-func (s *server) respond(w http.ResponseWriter, r *http.Request, data interface{}, status int) {
+func (s *Server) respond(w http.ResponseWriter, r *http.Request, data interface{}, status int) {
 	w.WriteHeader(status)
 	if data == nil {
 		return
@@ -15,6 +15,23 @@ func (s *server) respond(w http.ResponseWriter, r *http.Request, data interface{
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte("error encoding response as JSON"))
-		s.log.Logf("error encoding response as JSON: %v", err)
+		s.L.Logf("error encoding response as JSON: %v", err)
 	}
+}
+
+func (s *Server) error(w http.ResponseWriter, r *http.Request, status int, code ErrorCode, msg string) {
+	ve := E{
+		Code:    code,
+		Message: msg,
+	}
+	s.respond(w, r, ve, status)
+}
+
+func (s *Server) invalid(w http.ResponseWriter, r *http.Request, validationErrors map[string]string) {
+	ve := E{
+		Code:       ErrCodeValidationFailed,
+		Message:    "Validation Failed",
+		Validation: validationErrors,
+	}
+	s.respond(w, r, ve, http.StatusBadRequest)
 }

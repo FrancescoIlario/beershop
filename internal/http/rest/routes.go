@@ -6,8 +6,8 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func (s *server) routes() {
-	s.log.Logln("Registering routes")
+func (s *Server) RegisterRoutes() {
+	s.L.Logln("Registering routes")
 	router := mux.NewRouter()
 	{ // Beer
 		router.HandleFunc("/beer", s.handleCreate()).Methods(http.MethodPost)

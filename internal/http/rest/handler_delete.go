@@ -4,11 +4,23 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/FrancescoIlario/beershop"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 )
 
-func (s *server) handleDelete() http.HandlerFunc {
+func (s *Server) handleDelete() http.HandlerFunc {
+	handleErr := func(w http.ResponseWriter, r *http.Request, err error, cr *beershop.DeleteBeerCmdResult) {
+		switch err {
+		case beershop.ErrNotFound:
+			s.respond(w, r, err.Error(), http.StatusConflict)
+		case beershop.ErrValidationFailed:
+			s.invalid(w, r, cr.Validation.Errors())
+		default:
+			s.error(w, r, http.StatusInternalServerError, ErrCodeInternal, "Error handling request")
+		}
+	}
+
 	return func(w http.ResponseWriter, r *http.Request) {
 		// decode request
 		v := mux.Vars(r)
@@ -16,19 +28,21 @@ func (s *server) handleDelete() http.HandlerFunc {
 		id, err := uuid.Parse(idStr)
 		if err != nil {
 			m := fmt.Sprintf("provided id is not a valid guid: %v", idStr)
-			s.respond(w, r, e{Message: m}, http.StatusBadRequest)
-			s.log.Logf("provided id (%v) is not a valid guid: %v", idStr, err)
+			s.respond(w, r, E{Message: m}, http.StatusBadRequest)
+			s.L.Logf("provided id (%v) is not a valid guid: %v", idStr, err)
 			return
 		}
 
 		// persisting request
-		if err := s.db.Delete(r.Context(), id); err != nil {
-			s.respond(w, r, e{Message: "error persisting data into database"}, http.StatusInternalServerError)
-			s.log.Logf("error persisting data into database: %v", err)
+		cmd := beershop.DeleteBeerCmd{ID: id}
+		dr, err := s.Be.Delete(r.Context(), cmd)
+		if err != nil {
+			s.L.Logf("error handling request: %v", err)
+			handleErr(w, r, err, dr)
 			return
 		}
 
 		// responding
-		s.respond(w, r, nil, http.StatusOK)
+		s.respond(w, r, dr.Result, http.StatusOK)
 	}
 }

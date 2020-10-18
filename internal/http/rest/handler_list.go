@@ -7,7 +7,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func (s *server) handleList() http.HandlerFunc {
+func (s *Server) handleList() http.HandlerFunc {
 	type beer struct {
 		ID   uuid.UUID `json:"id"`
 		Name string    `json:"name"`
@@ -16,28 +16,16 @@ func (s *server) handleList() http.HandlerFunc {
 	type response struct {
 		Beers []beer `json:"beers"`
 	}
-	convert := func(b []beershop.Beer) []beer {
-		lb := make([]beer, len(b))
-		for i, be := range b {
-			lb[i] = beer{
-				ID:   be.ID,
-				Name: be.Name,
-				Abv:  be.Abv,
-			}
-		}
-		return lb
-	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
-		// reading from database
-		b, err := s.db.List(r.Context())
+		resp, err := s.Be.List(r.Context(), beershop.ListBeerQry{})
 		if err != nil {
-			s.respond(w, r, e{Message: "error reading data from database"}, http.StatusInternalServerError)
-			s.log.Logf("error reading data from database: %v", err)
+			s.error(w, r, http.StatusInternalServerError, ErrCodeInternal, "Error handling request")
+			s.L.Logf("error reading data: %v", err)
 			return
 		}
 
 		// responding
-		s.respond(w, r, response{Beers: convert(b)}, http.StatusOK)
+		s.respond(w, r, resp, http.StatusOK)
 	}
 }
